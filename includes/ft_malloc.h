@@ -6,7 +6,7 @@
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/05 01:54:47 by abassibe          #+#    #+#             */
-/*   Updated: 2018/06/06 05:12:54 by abassibe         ###   ########.fr       */
+/*   Updated: 2018/06/07 01:21:59 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,14 @@
 # include <unistd.h>
 # include <stdio.h>
 
-# define TINY			0
-# define MAX_TINY		256
-# define TINY_ZONE		32768
-# define TINY_CLUSTER	64
-# define SMALL			1
-# define MAX_SMALL		512
-# define SMALL_ZONE		57344
-# define SMALL_CLUSTER	128
+# define TINY				0
+# define MAX_TINY			256
+# define TINY_ZONE			32768
+# define TINY_CLUSTER_LEN	64
+# define SMALL				1
+# define MAX_SMALL			512
+# define SMALL_ZONE			57344
+# define SMALL_CLUSTER_LEN	128
 //# define LARGE			2
 
 typedef struct			s_meta_data
