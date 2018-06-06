@@ -6,7 +6,7 @@
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/05 01:54:47 by abassibe          #+#    #+#             */
-/*   Updated: 2018/06/06 05:04:26 by abassibe         ###   ########.fr       */
+/*   Updated: 2018/06/06 05:12:54 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ typedef struct			s_meta_data
 typedef struct			s_header
 {
 	t_meta_data			*start;
-//	struct s_header		*next;
+	struct s_header		*next;
 	char				*mapping;
 	void				*prev_addr;
 	int					type;
