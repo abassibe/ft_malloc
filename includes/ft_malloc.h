@@ -6,7 +6,7 @@
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/05 01:54:47 by abassibe          #+#    #+#             */
-/*   Updated: 2018/06/07 01:21:59 by abassibe         ###   ########.fr       */
+/*   Updated: 2018/06/07 04:06:14 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,16 @@
 # include <sys/mman.h>
 # include <unistd.h>
 # include <stdio.h>
+#include "libft.h"
 
-# define TINY				0
-# define MAX_TINY			256
-# define TINY_ZONE			32768
-# define TINY_CLUSTER_LEN	64
-# define SMALL				1
-# define MAX_SMALL			512
-# define SMALL_ZONE			57344
-# define SMALL_CLUSTER_LEN	128
+# define TINY					0
+# define MAX_TINY				256
+# define TINY_ZONE				32768
+# define TINY_CLUSTER_LEN		64
+# define SMALL					1
+# define MAX_SMALL				512
+# define SMALL_ZONE				57344
+# define SMALL_CLUSTER_LEN		128
 //# define LARGE			2
 
 typedef struct			s_meta_data
@@ -38,16 +39,19 @@ typedef struct			s_meta_data
 typedef struct			s_header
 {
 	t_meta_data			*start;
-	struct s_header		*next;
+//	struct s_header		*next;
+	char				*next;
 	char				*mapping;
 	void				*prev_addr;
 	int					type;
 	int					max_adjacent;
 }						t_header;
 
-extern t_header			*g_data;
+extern t_header			g_data;
 
 void					*malloc(size_t size);
 void					malloc_tiny(void **addr, size_t size);
+void					show_alloc_mem();
+void					show_alloc_mem_better_than_show_alloc_mem();
 
 #endif
