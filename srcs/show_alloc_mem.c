@@ -6,7 +6,7 @@
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/07 03:44:19 by abassibe          #+#    #+#             */
-/*   Updated: 2018/06/07 04:10:13 by abassibe         ###   ########.fr       */
+/*   Updated: 2018/06/07 04:12:42 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,9 @@ void	show_alloc_mem_better_than_show_alloc_mem()
 {
 	t_header	tmp;
 
-	printf("dfgdfh\n");
 	tmp = g_data;
-	while (tmp.next)
-	{
+//	while (tmp.next)
+//	{
 		if (tmp.type == TINY)
 		{
 			ft_printf("Tiny map :\n");
@@ -49,5 +48,5 @@ void	show_alloc_mem_better_than_show_alloc_mem()
 			ft_printf("Large map :\n");
 //			print_large(&tmp);
 		}
-	}
+//	}
 }
