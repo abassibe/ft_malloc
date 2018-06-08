@@ -6,7 +6,7 @@
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/05 01:54:47 by abassibe          #+#    #+#             */
-/*   Updated: 2018/06/07 04:06:14 by abassibe         ###   ########.fr       */
+/*   Updated: 2018/06/08 06:19:16 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@
 # define SMALL					1
 # define MAX_SMALL				512
 # define SMALL_ZONE				57344
-# define SMALL_CLUSTER_LEN		128
+# define SMALL_CLUSTER_LEN		112
+# define MAX_CLUSTERS			512
 //# define LARGE			2
 
 typedef struct			s_meta_data
@@ -39,9 +40,9 @@ typedef struct			s_meta_data
 typedef struct			s_header
 {
 	t_meta_data			*start;
-//	struct s_header		*next;
-	char				*next;
-	char				*mapping;
+	struct s_header		*next;
+	void				*start_zone;
+	char				mapping[512];
 	void				*prev_addr;
 	int					type;
 	int					max_adjacent;
@@ -49,9 +50,10 @@ typedef struct			s_header
 
 extern t_header			g_data;
 
-void					*malloc(size_t size);
-void					malloc_tiny(void **addr, size_t size);
+void					*ft_malloc(size_t size);
+void					*malloc_tiny(size_t size);
 void					show_alloc_mem();
 void					show_alloc_mem_better_than_show_alloc_mem();
+void					allocate_zone_tiny(t_header *tmp, size_t size);
 
 #endif
