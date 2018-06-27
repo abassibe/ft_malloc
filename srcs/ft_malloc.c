@@ -42,7 +42,7 @@ void	first_alloc(size_t size)
 		g_data.next = NULL;
 		g_data.prev_addr = NULL;
 		g_data.type = TINY;
-		g_data.max_adjacent = 503 * 64;
+		g_data.max_adjacent = 503 * 64; // valeur variable qui définit la taille maximale consécutive possible d'une allocation dans la zone/map
 		addr = ft_memcpy(addr, &g_data, sizeof(t_header));
 	}
 	g_data.start_zone = &*addr;

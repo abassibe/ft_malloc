@@ -80,16 +80,15 @@ void	allocate_zone_tiny(t_header *tmp, size_t size)
 	new.max_adjacent = 503 * 64;
 	new.start_zone = tmp->next;
 	tmp->next = ft_memcpy(tmp->next, &new, sizeof(t_header));
-	while (++i < 9)
+	while (++i < 9) // Condamnation des 9 premiers clusters pour la structure header
 		tmp->mapping[i] = '1';
 }
 
 void	*malloc_tiny(size_t size)
 {
 	t_header	*tmp;
-	tmp = &g_data;
-	allocate_zone_tiny(tmp, size);
-	while (tmp)
+	tmp = &g_data; // assignation sur tmp pour ne pas perdre le pointeur de début de g_data
+	while (tmp) // recherche d'une zone éligible
 	{
 		if (tmp->type == 0 && tmp->max_adjacent > size + sizeof(t_meta_data))
 		{
@@ -100,6 +99,6 @@ void	*malloc_tiny(size_t size)
 			break ;
 		tmp = tmp->next;
 	}
-	allocate_zone_tiny(tmp, size);
+	allocate_zone_tiny(tmp, size); // allocation d'une nouvelle zone si aucune valide
 	return (tmp->start->addr);
 }
