@@ -5,57 +5,68 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/06/05 01:54:47 by abassibe          #+#    #+#             */
+/*   Created: 2020/02/11 01:54:47 by abassibe          #+#    #+#             */
 /*   Updated: 2018/06/08 06:19:16 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_MALLOC_H
-# define FT_MALLOC_H
+#define FT_MALLOC_H
 
-# include <sys/mman.h>
-# include <unistd.h>
-# include <stdio.h>
+#include <sys/mman.h>
+#include <unistd.h>
+#include <stdio.h>
 #include "libft.h"
 
-# define TINY					0 // ID
-# define MAX_TINY				256 // taille demandée maximale pour une allocation de type tinnyi
-# define TINY_ZONE				32768 // taille totale de la zone/map (100 allocations de type tinny
-# define TINY_CLUSTER_LEN		64 // sous division de la zone/map (allocation minimale, toujours multiple de cette valeur ex: 70 octets demandé = 2 Cluster alloués)
-# define SMALL					1 // ID
-# define MAX_SMALL				512 // taille demandée maximale pour une allocation de type small
-# define SMALL_ZONE				57344 // taille totale de la zone/map (100 allocations de type small
-# define SMALL_CLUSTER_LEN		112 // sous division de la zone/map (allocation minimale, toujours multiple de cette valeur ex: 120 octets demandé = 2 Cluster alloués)
-# define MAX_CLUSTERS			512 // cluster maximum pour chaque zone/map
-//# define LARGE			2
+#define PAGE_SIZE getpagesize()																									 // Taille des pages allouées par le système
+#define MIN_ALLOC_BY_ZONE 100																									 // Allocation maximum par zone
+#define MAX_TINY_SIZE 128																										 // Taille maximale pour une allocation de type tinny
+#define MAX_TINY_ZONE ((((((128 + sizeof(t_meta_data)) * MIN_ALLOC_BY_ZONE) + sizeof(t_header)) / PAGE_SIZE) + 1) * PAGE_SIZE)   // Taille maximale pour une zone de type tinny
+#define MAX_SMALL_SIZE 1024																										 // Taille maximale pour une allocation de type small
+#define MAX_SMALL_ZONE ((((((1024 + sizeof(t_meta_data)) * MIN_ALLOC_BY_ZONE) + sizeof(t_header)) / PAGE_SIZE) + 1) * PAGE_SIZE) // Taille maximale pour une zone de type small
 
-/* structure de début de chaque zone/map */
-typedef struct			s_meta_data
+/* Type d'allocation selon la taille demandée */
+typedef enum e_size_type
 {
-	void				*addr;
-	size_t				size;
-	struct s_meta_data	*next;
-	int					free;
-}						t_meta_data;
+	TINY,
+	SMALL,
+	LARGE
+} t_page_type;
 
-/* structure de début de zone/map */
-typedef struct			s_header
+/* Structure de début de chaque allocation */
+typedef struct s_meta_data //size 40
 {
-	t_meta_data			*start;
-	struct s_header		*next;
-	void				*start_zone;
-	char				mapping[MAX_CLUSTERS];
-	void				*prev_addr;
-	int					type;
-	int					max_adjacent;
-}						t_header;
+	void *addr;				  // Pointeur sur la région allouée et retournée (après header)
+	struct s_meta_data *prev; // Allocation précédente
+	struct s_meta_data *next; // Allocation suivante
+	size_t size;			  // Taille de la région allouée (sans header)
+	int free;				  // O si allouée et non free, sinon 1
+} t_meta_data;
 
-extern t_header			g_data;
+/* Structure de début de zone */
+typedef struct s_header //size 24
+{
+	struct s_header *next_zone; // Pointeur sur zone suivante
+	t_meta_data *first_elem;	// Pointeur sur première allocation de la zone courante
+	t_page_type type;			// Définit quel type d'allocation cette zone gère
+} t_header;
 
-void					*ft_malloc(size_t size);
-void					*malloc_tiny(size_t size);
-void					show_alloc_mem();
-void					show_alloc_mem_better_than_show_alloc_mem();
-void					allocate_zone_tiny(t_header *tmp, size_t size);
+extern void *ft_malloc(size_t size);
+extern void ft_free(void *ptr);
+extern void *realloc(void *ptr, size_t size);
+
+t_header *get_struct(void);
+t_header **first_alloc(void);
+t_header *init_header(size_t size);
+
+void *create_allocation(t_header *g_data, size_t size, t_page_type type);
+int looking_for_place(t_meta_data *region, t_page_type type);
+t_header *new_zone(t_page_type type, size_t size);
+
+void free_large_zone(t_header *g_data, t_header *preview, void *ptr);
+void free_tiny_small_zone(t_header *g_data, t_header *preview, t_meta_data *tmp, void *ptr);
+
+t_page_type get_page_type(size_t size);
+void init_meta_data(t_header *g_data, size_t size);
 
 #endif

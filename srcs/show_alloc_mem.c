@@ -5,61 +5,105 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/06/07 03:44:19 by abassibe          #+#    #+#             */
+/*   Created: 2020/02/11 03:44:19 by abassibe          #+#    #+#             */
 /*   Updated: 2018/06/08 03:39:53 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_malloc.h"
 
-void	print_tiny(t_header tmp, size_t size)
+void printData(t_header *g_data, size_t size)
 {
-	int		i;
-	int		j;
+	t_header *tmp = g_data;
+	int count = 0;
+	int zoneCount = 0;
 
-	i = -1;
-	j = 0;
-	while (++i < size)
+	while (g_data)
 	{
-		if (j % 64 == 0 && j > 0)
+		if (g_data->type == TINY)
 		{
-			write(1, "\n", 1);
-			j = 0;
+			printf("TINY ZONE = %lu\n", MAX_TINY_ZONE);
+			for (int i = 0; i < MAX_TINY_ZONE && i + MAX_TINY_SIZE + sizeof(t_meta_data) < MAX_TINY_ZONE; i++)
+			{
+				if (i < sizeof(t_header))
+				{
+					if (i == 0)
+						printf("\033[0;31m%p\n", (char *)g_data);
+					printf("\033[0;31m[% 4d]", ((char *)g_data)[i]);
+					if (i + 1 == sizeof(t_header))
+						printf("\n");
+					continue;
+				}
+				for (int j = i; j < MAX_TINY_ZONE && j < i + MAX_TINY_SIZE + sizeof(t_meta_data); j++)
+				{
+					if (i == j)
+						printf("\033[0;31m%p\n", (char *)g_data + j);
+					if (j < i + sizeof(t_meta_data))
+						printf("\033[0;31m[% 4d]", ((char *)g_data)[j]);
+					else
+						printf("\033[0;32m[% 4d]", ((char *)g_data)[j]);
+					if (j + 1 >= i + MAX_TINY_SIZE + sizeof(t_meta_data))
+					{
+						i = j;
+						count++;
+						printf("\ni = %d, région #%d, region size = %lu, zone #%d\n", i, count, MAX_SMALL_SIZE + sizeof(t_meta_data), zoneCount);
+						break;
+					}
+				}
+			}
 		}
-		else if (j % 8 == 0 && j > 0)
-			write(1, " ", 1);
-		if (((char *)tmp.start_zone)[i] > 31 && ((char *)tmp.start_zone)[i] < 127)
-			write(1, &((char *)tmp.start_zone)[i], 1);
+		else if (g_data->type == SMALL)
+		{
+			printf("SMALL ZONE = %lu\n", MAX_SMALL_ZONE);
+			for (int i = 0; i < MAX_SMALL_ZONE; i++)
+			{
+				if (i < sizeof(t_header))
+				{
+					if (i == 0)
+						printf("\033[0;31m%p\n", (char *)g_data);
+					printf("\033[0;31m[% 4d]", ((char *)g_data)[i]);
+					if (i + 1 == sizeof(t_header))
+						printf("\n");
+					continue;
+				}
+				for (int j = i; j < MAX_SMALL_ZONE && j < i + MAX_SMALL_SIZE + sizeof(t_meta_data); j++)
+				{
+					if (i == j)
+						printf("\033[0;31m%p\n", (char *)g_data + j);
+					if (j < i + sizeof(t_meta_data))
+						printf("\033[0;31m[% 4d]", ((char *)g_data)[j]);
+					else
+						printf("\033[0;32m[% 4d]", ((char *)g_data)[j]);
+					if (j + 1 >= i + MAX_SMALL_SIZE + sizeof(t_meta_data))
+					{
+						i = j;
+						count++;
+						printf("\ni = %d, région #%d, region size = %lu, zone #%d\n", i, count, MAX_SMALL_SIZE + sizeof(t_meta_data), zoneCount);
+						break;
+					}
+				}
+			}
+		}
 		else
-			write(1, ".", 1);
-		j++;
+		{
+			printf("LARGE ZONE = %lu\n", size);
+			for (int i = 0; i < size; i++)
+			{
+				if (i < sizeof(t_header))
+				{
+					printf("\033[0;31m[% 4d]", ((char *)g_data)[i]);
+					if (i + 1 == sizeof(t_header))
+						printf("\n");
+					continue;
+				}
+				if (i == (sizeof(t_header) + sizeof(t_meta_data)))
+					printf(" ");
+				printf("\033[0;34m[% 4d]", ((char *)g_data)[i]);
+			}
+		}
+		printf("\n");
+		g_data = g_data->next_zone;
+		zoneCount++;
 	}
-	write(1, "\n", 1);
-}
-
-void	show_alloc_mem_better_than_show_alloc_mem()
-{
-	t_header	*tmp;
-
-	tmp = &g_data;
-	while (tmp)
-	{
-		if (tmp->type == TINY)
-		{
-			printf("Tiny map :\n");
-			print_tiny(*tmp, TINY_ZONE);
-		}
-		else if (tmp->type == SMALL)
-		{
-			ft_printf("Small map :\n");
-//			print_small(&tmp);
-		}
-		else
-		{
-			ft_printf("Large map :\n");
-//			print_large(&tmp);
-		}
-		printf("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//////////////////////////////////\n");
-		tmp = tmp->next;
-	}
+	printf("end of first zone");
 }

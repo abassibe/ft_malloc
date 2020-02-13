@@ -5,7 +5,7 @@
 #                                                     +:+ +:+         +:+      #
 #    By: abassibe <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2017/02/01 12:45:46 by abassibe          #+#    #+#              #
+#    Created: 2020/02/10 12:45:46 by abassibe          #+#    #+#              #
 #    Updated: 2018/06/06 03:07:42 by abassibe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
@@ -17,6 +17,10 @@ endif
 NAME = libft_malloc_$(HOSTTYPE).so
 
 SRCS =	ft_malloc.c \
+		ft_free.c \
+		new_allocation.c \
+		first_allocation.c \
+		utils.c
 
 OBJS = $(SRCS:.c=.o)
 

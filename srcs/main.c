@@ -5,7 +5,7 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/06/05 02:13:29 by abassibe          #+#    #+#             */
+/*   Created: 2020/02/11 02:13:29 by abassibe          #+#    #+#             */
 /*   Updated: 2018/06/08 01:31:29 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -14,6 +14,13 @@
 
 int main()
 {
-	char *tr = (char*)ft_malloc(10);
-	show_alloc_mem_better_than_show_alloc_mem();
+	int i;
+	char *addr;
+
+	i = 0;
+	while (i < 1024)
+	{
+		i++;
+	}
+	return (0);
 }

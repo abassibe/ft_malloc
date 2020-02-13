@@ -5,58 +5,45 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/06/05 02:25:52 by abassibe          #+#    #+#             */
+/*   Created: 2020/02/11 02:25:52 by abassibe          #+#    #+#             */
 /*   Updated: 2018/06/08 06:19:12 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_malloc.h"
 
-t_header	g_data = {NULL, NULL, NULL, {0}, NULL, -1, 0};
-
-void	malloc_small(size_t size)
+/* En cas de nouvelle allocation, vérifie l'existence d'une zone et la place par type. Réoriente au besoin. */
+static void *new_allocation(t_header *g_data, size_t size)
 {
-	void	*addr;
+	t_header *header;
+	t_page_type type;
 
-	addr = mmap(NULL, SMALL_ZONE, PROT_READ | PROT_WRITE,
-			MAP_ANON | MAP_PRIVATE, -1, 0);
-}
-
-void	malloc_big(size_t size)
-{
-	void	*addr;
-
-	addr = mmap(NULL, size, PROT_READ | PROT_WRITE,
-			MAP_ANON | MAP_PRIVATE, -1, 0);
-}
-
-void	first_alloc(size_t size)
-{
-	void	*addr;
-
-	if (size < MAX_TINY)
+	type = get_page_type(size);
+	header = g_data;
+	while (header)
 	{
-		addr = mmap(NULL, TINY_ZONE, PROT_READ | PROT_WRITE,
-				MAP_ANON | MAP_PRIVATE, -1, 0);
-		g_data.start = NULL;
-		g_data.next = NULL;
-		g_data.prev_addr = NULL;
-		g_data.type = TINY;
-		g_data.max_adjacent = 503 * 64; // valeur variable qui définit la taille maximale consécutive possible d'une allocation dans la zone/map
-		addr = ft_memcpy(addr, &g_data, sizeof(t_header));
+		if (header->type == type && looking_for_place(header->first_elem, type) != -1)
+			return (create_allocation(header, size, type));
+		if (!header->next_zone)
+			break;
+		header = header->next_zone;
 	}
-	g_data.start_zone = &*addr;
+	header->next_zone = new_zone(type, size);
+	return (header->next_zone->first_elem->addr);
 }
 
-void	*ft_malloc(size_t size)
+/* Renvoie un pointeur sur une zone mémoire allouée de size octet */
+extern void *ft_malloc(size_t size)
 {
-	if (!g_data.start)
-		first_alloc(size);
-	if (size < MAX_TINY)
-		malloc_tiny(size);
-	else if (size < MAX_SMALL)
-		malloc_small(size);
-	else
-		malloc_big(size);
-	return (g_data.start_zone);
+	t_header *g_data;
+	void *ret;
+
+	if (size <= 0)
+		return (NULL);
+	g_data = get_struct();
+	if (!g_data)
+		return (&*init_header(size)->first_elem->addr);
+	if (!(ret = new_allocation(g_data, size)))
+		return (NULL);
+	return (&*ret);
 }
