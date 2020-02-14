@@ -12,98 +12,93 @@
 
 #include "../includes/ft_malloc.h"
 
-void printData(t_header *g_data, size_t size)
+static void fill_tab(t_header **tab, t_header *g_data)
 {
-	t_header *tmp = g_data;
-	int count = 0;
-	int zoneCount = 0;
+	int i;
 
+	i = 0;
 	while (g_data)
 	{
-		if (g_data->type == TINY)
-		{
-			printf("TINY ZONE = %lu\n", MAX_TINY_ZONE);
-			for (int i = 0; i < MAX_TINY_ZONE && i + MAX_TINY_SIZE + sizeof(t_meta_data) < MAX_TINY_ZONE; i++)
-			{
-				if (i < sizeof(t_header))
-				{
-					if (i == 0)
-						printf("\033[0;31m%p\n", (char *)g_data);
-					printf("\033[0;31m[% 4d]", ((char *)g_data)[i]);
-					if (i + 1 == sizeof(t_header))
-						printf("\n");
-					continue;
-				}
-				for (int j = i; j < MAX_TINY_ZONE && j < i + MAX_TINY_SIZE + sizeof(t_meta_data); j++)
-				{
-					if (i == j)
-						printf("\033[0;31m%p\n", (char *)g_data + j);
-					if (j < i + sizeof(t_meta_data))
-						printf("\033[0;31m[% 4d]", ((char *)g_data)[j]);
-					else
-						printf("\033[0;32m[% 4d]", ((char *)g_data)[j]);
-					if (j + 1 >= i + MAX_TINY_SIZE + sizeof(t_meta_data))
-					{
-						i = j;
-						count++;
-						printf("\ni = %d, région #%d, region size = %lu, zone #%d\n", i, count, MAX_SMALL_SIZE + sizeof(t_meta_data), zoneCount);
-						break;
-					}
-				}
-			}
-		}
-		else if (g_data->type == SMALL)
-		{
-			printf("SMALL ZONE = %lu\n", MAX_SMALL_ZONE);
-			for (int i = 0; i < MAX_SMALL_ZONE; i++)
-			{
-				if (i < sizeof(t_header))
-				{
-					if (i == 0)
-						printf("\033[0;31m%p\n", (char *)g_data);
-					printf("\033[0;31m[% 4d]", ((char *)g_data)[i]);
-					if (i + 1 == sizeof(t_header))
-						printf("\n");
-					continue;
-				}
-				for (int j = i; j < MAX_SMALL_ZONE && j < i + MAX_SMALL_SIZE + sizeof(t_meta_data); j++)
-				{
-					if (i == j)
-						printf("\033[0;31m%p\n", (char *)g_data + j);
-					if (j < i + sizeof(t_meta_data))
-						printf("\033[0;31m[% 4d]", ((char *)g_data)[j]);
-					else
-						printf("\033[0;32m[% 4d]", ((char *)g_data)[j]);
-					if (j + 1 >= i + MAX_SMALL_SIZE + sizeof(t_meta_data))
-					{
-						i = j;
-						count++;
-						printf("\ni = %d, région #%d, region size = %lu, zone #%d\n", i, count, MAX_SMALL_SIZE + sizeof(t_meta_data), zoneCount);
-						break;
-					}
-				}
-			}
-		}
-		else
-		{
-			printf("LARGE ZONE = %lu\n", size);
-			for (int i = 0; i < size; i++)
-			{
-				if (i < sizeof(t_header))
-				{
-					printf("\033[0;31m[% 4d]", ((char *)g_data)[i]);
-					if (i + 1 == sizeof(t_header))
-						printf("\n");
-					continue;
-				}
-				if (i == (sizeof(t_header) + sizeof(t_meta_data)))
-					printf(" ");
-				printf("\033[0;34m[% 4d]", ((char *)g_data)[i]);
-			}
-		}
-		printf("\n");
+		tab[i] = g_data;
 		g_data = g_data->next_zone;
-		zoneCount++;
+		i++;
 	}
-	printf("end of first zone");
+	tab[i] = NULL;
+}
+
+static void print(t_header **tab)
+{
+	int i;
+	int total;
+	t_meta_data *tmp;
+
+	i = 0;
+	total = 0;
+	while (tab[i])
+	{
+		if (tab[i]->type == TINY)
+			ft_printf("TINY : %p\n", tab[i]);
+		else if (tab[i]->type == SMALL)
+			ft_printf("SMALL : %p\n", tab[i]);
+		else
+			ft_printf("LARGE : %p\n", tab[i]);
+		tmp = tab[i]->first_elem;
+		while (tmp)
+		{
+			ft_printf("%p - %p : %lu octets\n", tmp->addr, tmp->addr + tmp->size, tmp->size);
+			total += tmp->size;
+			tmp = tmp->next;
+		}
+		i++;
+	}
+	ft_printf("Total : %d octets\n", total);
+}
+
+static void sort_by_address(t_header *g_data, int amount_of_zone)
+{
+	t_header *tmp;
+	t_header *tab[amount_of_zone + 1];
+	int i;
+
+	i = 0;
+	fill_tab(tab, g_data);
+	while (amount_of_zone > 0)
+	{
+		if (i < amount_of_zone && tab[i + 1] && (&*tab[i] > &*tab[i + 1]))
+		{
+			tmp = tab[i];
+			tab[i] = tab[i + 1];
+			tab[i + 1] = tmp;
+		}
+		if (i >= amount_of_zone)
+		{
+			amount_of_zone--;
+			i = 0;
+		}
+		i++;
+	}
+	print(tab);
+}
+
+static int count_zone(t_header *g_data)
+{
+	int i;
+
+	i = 0;
+	while (g_data)
+	{
+		g_data = g_data->next_zone;
+		i++;
+	}
+	return (i);
+}
+
+extern void show_alloc_mem()
+{
+	t_header *g_data;
+
+	g_data = get_struct();
+	if (!g_data)
+		return;
+	sort_by_address(g_data, count_zone(g_data));
 }

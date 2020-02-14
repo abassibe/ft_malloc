@@ -43,5 +43,6 @@ t_header *init_header(size_t size)
     g_data->type = type;
     init_meta_data(g_data, size);
     *first_alloc() = g_data;
+    total_mmap_size_allocated += size;
     return (g_data);
 }

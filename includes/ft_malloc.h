@@ -16,6 +16,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <pthread.h>
 #include "libft.h"
 
 #define PAGE_SIZE getpagesize()																									 // Taille des pages allouées par le système
@@ -51,9 +52,17 @@ typedef struct s_header //size 24
 	t_page_type type;			// Définit quel type d'allocation cette zone gère
 } t_header;
 
+extern unsigned long total_mmap_size_allocated;
+
+extern unsigned long total_allocation_request;
+
+extern unsigned long total_free_request;
+
 extern void *ft_malloc(size_t size);
 extern void ft_free(void *ptr);
-extern void *realloc(void *ptr, size_t size);
+extern void *ft_realloc(void *ptr, size_t size);
+extern void show_alloc_mem();
+extern void *ft_calloc(size_t count, size_t size);
 
 t_header *get_struct(void);
 t_header **first_alloc(void);
@@ -68,5 +77,8 @@ void free_tiny_small_zone(t_header *g_data, t_header *preview, t_meta_data *tmp,
 
 t_page_type get_page_type(size_t size);
 void init_meta_data(t_header *g_data, size_t size);
+void malloc_stats();
+
+void malloc_dump(int flag);
 
 #endif

@@ -82,6 +82,7 @@ extern void ft_free(void *ptr)
 {
     t_header *g_data;
 
+    total_free_request++;
     if (!ptr)
         return;
     g_data = get_struct();

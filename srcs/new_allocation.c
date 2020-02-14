@@ -29,6 +29,7 @@ t_header *new_zone(t_page_type type, size_t size)
     new_page->next_zone = NULL;
     new_page->type = type;
     init_meta_data(new_page, size);
+    total_mmap_size_allocated += size;
     return (new_page);
 }
 
@@ -73,7 +74,6 @@ t_meta_data *create_new_block(t_meta_data *current_block, size_t size)
 void *create_allocation(t_header *g_data, size_t size, t_page_type type)
 {
     t_meta_data *current_block;
-    t_meta_data *new_block;
     int count;
     int max_alloc_by_zone;
 

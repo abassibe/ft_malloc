@@ -12,6 +12,12 @@
 
 #include "../includes/ft_malloc.h"
 
+unsigned long total_mmap_size_allocated = 0;
+
+unsigned long total_allocation_request = 0;
+
+unsigned long total_free_request = 0;
+
 /* En cas de nouvelle allocation, vérifie l'existence d'une zone et la place par type. Réoriente au besoin. */
 static void *new_allocation(t_header *g_data, size_t size)
 {
@@ -38,6 +44,7 @@ extern void *ft_malloc(size_t size)
 	t_header *g_data;
 	void *ret;
 
+	total_allocation_request++;
 	if (size <= 0)
 		return (NULL);
 	g_data = get_struct();

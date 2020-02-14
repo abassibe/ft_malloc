@@ -34,3 +34,11 @@ void init_meta_data(t_header *g_data, size_t size)
     meta_data->free = 0;
     g_data->first_elem = meta_data;
 }
+
+void malloc_stats()
+{
+    ft_printf("\n -- malloc stats--\n");
+    ft_printf("\n total_mmap_size_allocated  : %lu", total_mmap_size_allocated);
+    ft_printf("\n total_allocation_request   : %lu", total_allocation_request);
+    ft_printf("\n total_free_request         : %lu", total_free_request);
+}
