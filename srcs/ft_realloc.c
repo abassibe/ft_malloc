@@ -56,17 +56,22 @@ static void *search_targeted_address(t_header *g_data, void *ptr, size_t size)
         preview = g_data;
         g_data = g_data->next_zone;
     }
+    print_error("Address not found\n", 1, NULL);
     return (NULL);
 }
 
 extern void *ft_realloc(void *ptr, size_t size)
 {
     t_header *g_data;
+    void *ret;
 
+    pthread_mutex_lock(&g_mutex);
     g_data = get_struct();
     if (!ptr || !g_data)
         return (ft_malloc(size));
     if (size <= 0)
         size = 1;
-    return (search_targeted_address(g_data, ptr, size));
+    ret = search_targeted_address(g_data, ptr, size);
+    pthread_mutex_unlock(&g_mutex);
+    return (ret);
 }

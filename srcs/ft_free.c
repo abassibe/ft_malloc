@@ -82,11 +82,19 @@ extern void ft_free(void *ptr)
 {
     t_header *g_data;
 
+    pthread_mutex_lock(&g_mutex);
     total_free_request++;
     if (!ptr)
+    {
+        print_error("Trying to free NULL pointer.\n", 0, NULL);
         return;
+    }
     g_data = get_struct();
     if (!g_data)
+    {
+        print_error("No allocation yet.\n", 0, NULL);
         return;
+    }
     search_targeted_address(g_data, ptr);
+    pthread_mutex_unlock(&g_mutex);
 }

@@ -23,13 +23,15 @@ t_header *new_zone(t_page_type type, size_t size)
     else if (type == SMALL)
         new_page = mmap(0, MAX_SMALL_ZONE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
     else
-        new_page = mmap(0, size + sizeof(t_header) + sizeof(t_meta_data), PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+        new_page = allocate_large(new_page, size);
     if (new_page == MAP_FAILED)
-        return (NULL);
+        return (print_error("Failing memory allocation.\n", 1, NULL));
     new_page->next_zone = NULL;
     new_page->type = type;
     init_meta_data(new_page, size);
+    pthread_mutex_lock(&g_mutex);
     total_mmap_size_allocated += size;
+    pthread_mutex_unlock(&g_mutex);
     return (new_page);
 }
 

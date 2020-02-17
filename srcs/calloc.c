@@ -16,7 +16,9 @@ extern void *ft_calloc(size_t count, size_t size)
 {
     void *ret;
 
+    pthread_mutex_lock(&g_mutex);
     ret = ft_malloc(count * size);
     ft_memset(ret, '\0', (count * size));
+    pthread_mutex_unlock(&g_mutex);
     return (ret);
 }

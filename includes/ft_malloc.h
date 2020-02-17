@@ -52,21 +52,35 @@ typedef struct s_header //size 24
 	t_page_type type;			// Définit quel type d'allocation cette zone gère
 } t_header;
 
+typedef struct s_env_debug
+{
+	char *malloc_debug_report;
+	char *malloc_guard_edges;
+	char *malloc_do_not_protect_prelude;
+	char *malloc_do_not_protect_postlude;
+	char *malloc_error_abort;
+} t_env_debug;
+
 extern unsigned long total_mmap_size_allocated;
 
 extern unsigned long total_allocation_request;
 
 extern unsigned long total_free_request;
 
+pthread_mutex_t g_mutex;
+
+t_env_debug g_debug;
+
 extern void *ft_malloc(size_t size);
 extern void ft_free(void *ptr);
 extern void *ft_realloc(void *ptr, size_t size);
-extern void show_alloc_mem();
+extern void show_alloc_mem(void);
 extern void *ft_calloc(size_t count, size_t size);
 
 t_header *get_struct(void);
 t_header **first_alloc(void);
 t_header *init_header(size_t size);
+t_header *allocate_large(t_header *page, size_t size);
 
 void *create_allocation(t_header *g_data, size_t size, t_page_type type);
 int looking_for_place(t_meta_data *region, t_page_type type);
@@ -77,8 +91,10 @@ void free_tiny_small_zone(t_header *g_data, t_header *preview, t_meta_data *tmp,
 
 t_page_type get_page_type(size_t size);
 void init_meta_data(t_header *g_data, size_t size);
-void malloc_stats();
+void malloc_stats(void);
 
-void malloc_dump(int flag);
+void malloc_dump(void);
+
+void *print_error(char *error, int crash, void *ret);
 
 #endif

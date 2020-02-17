@@ -99,6 +99,11 @@ extern void show_alloc_mem()
 
 	g_data = get_struct();
 	if (!g_data)
+	{
+		print_error("No allocation yet.\n", 0, NULL);
 		return;
+	}
+	pthread_mutex_lock(&g_mutex);
 	sort_by_address(g_data, count_zone(g_data));
+	pthread_mutex_unlock(&g_mutex);
 }

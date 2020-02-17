@@ -18,6 +18,33 @@ unsigned long total_allocation_request = 0;
 
 unsigned long total_free_request = 0;
 
+t_env_debug g_debug;
+
+void *print_error(char *error, int crash, void *ret)
+{
+	if (g_debug.malloc_error_abort)
+	{
+		write(2, error, ft_strlen(error));
+		abort();
+	}
+	if (g_debug.malloc_debug_report && !ft_strcmp(g_debug.malloc_debug_report, "crash") && crash)
+		write(2, error, ft_strlen(error));
+	else if (g_debug.malloc_debug_report && !ft_strcmp(g_debug.malloc_debug_report, "none"))
+		return (ret);
+	else
+		write(2, error, ft_strlen(error));
+	return (ret);
+}
+
+static void get_env_debug()
+{
+	g_debug.malloc_debug_report = getenv("MallocDebugReport");
+	g_debug.malloc_guard_edges = getenv("MallocGuardEdges");
+	g_debug.malloc_do_not_protect_prelude = getenv("MallocDoNotProtectPrelude");
+	g_debug.malloc_do_not_protect_postlude = getenv("MallocDoNotProtectPostlude");
+	g_debug.malloc_error_abort = getenv("MallocErrorAbort");
+}
+
 /* En cas de nouvelle allocation, vérifie l'existence d'une zone et la place par type. Réoriente au besoin. */
 static void *new_allocation(t_header *g_data, size_t size)
 {
@@ -44,13 +71,16 @@ extern void *ft_malloc(size_t size)
 	t_header *g_data;
 	void *ret;
 
+	pthread_mutex_lock(&g_mutex);
 	total_allocation_request++;
+	get_env_debug();
 	if (size <= 0)
-		return (NULL);
+		return (print_error("Size <= 0.\n", 1, NULL));
 	g_data = get_struct();
 	if (!g_data)
 		return (&*init_header(size)->first_elem->addr);
 	if (!(ret = new_allocation(g_data, size)))
-		return (NULL);
+		return (print_error("Failure of the memory allocation.\n", 1, NULL));
+	pthread_mutex_unlock(&g_mutex);
 	return (&*ret);
 }
