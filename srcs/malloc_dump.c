@@ -12,9 +12,9 @@
 
 #include "../includes/malloc.h"
 
-static void print_large(t_header *data, int len)
+static void print_large(t_header *data, size_t len)
 {
-    int i;
+    size_t i;
 
     i = 0;
     while (i < len)
@@ -40,7 +40,7 @@ static void print_large(t_header *data, int len)
 
 static void print_tiny_small_next(t_meta_data *tmp, size_t len)
 {
-    int i;
+    size_t i;
 
     i = 0;
     while (tmp && i < len + sizeof(t_meta_data))
@@ -67,7 +67,7 @@ static void print_tiny_small_next(t_meta_data *tmp, size_t len)
 
 static void print_tiny_small(t_header *data, size_t len)
 {
-    int i;
+    size_t i;
 
     i = 0;
     while (i < sizeof(t_header))
@@ -85,7 +85,7 @@ static void print_tiny_small(t_header *data, size_t len)
 
 static void print(t_header *data)
 {
-    int len;
+    size_t len;
     int page_count;
 
     page_count = 1;
@@ -118,6 +118,7 @@ void malloc_dump(void)
         print_error("No allocation yet.\n", 0, NULL);
         return;
     }
+    pthread_mutex_lock(&g_mutex);
     ft_printf("---INFOS---\n");
     ft_printf("\033[0;31mZone's header\n");
     ft_printf("\033[0;33mBlock's header\n");
@@ -125,7 +126,6 @@ void malloc_dump(void)
     ft_printf("\033[1;31mGuard page\n");
     ft_printf("\033[0;0m");
     ft_printf("-----------\n\n");
-    pthread_mutex_lock(&g_mutex);
     print(data);
     pthread_mutex_unlock(&g_mutex);
 }

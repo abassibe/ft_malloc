@@ -36,7 +36,7 @@ void *print_error(char *error, int crash, void *ret)
 	return (ret);
 }
 
-static void get_env_debug()
+static void get_env_debug(void)
 {
 	g_debug.malloc_debug_report = getenv("MallocDebugReport");
 	g_debug.malloc_guard_edges = getenv("MallocGuardEdges");
@@ -66,7 +66,7 @@ static void *new_allocation(t_header *data, size_t size)
 }
 
 /* Renvoie un pointeur sur une zone mémoire allouée de size octet */
-extern void *malloc(size_t size)
+void *malloc(size_t size)
 {
 	t_header *data;
 	void *ret;

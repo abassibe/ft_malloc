@@ -37,12 +37,44 @@ void init_meta_data(t_header *data, size_t size)
     data->first_elem = meta_data;
 }
 
-void malloc_stats()
+/* Itoa without malloc */
+static void print_value(unsigned long val)
+{
+    char c[1];
+
+    c[0] = 0;
+    if (val > 0)
+    {
+        c[0] = val % 10 + '0';
+        val = val / 10;
+        print_value(val);
+    }
+    write(1, c, 1);
+}
+
+void malloc_stats(void)
 {
     pthread_mutex_lock(&g_mutex);
-    ft_printf("\n -- malloc stats--\n");
-    ft_printf("\n total_mmap_size_allocated  : %lu", total_mmap_size_allocated);
-    ft_printf("\n total_allocation_request   : %lu", total_allocation_request);
-    ft_printf("\n total_free_request         : %lu", total_free_request);
+    write(1, "\n-- malloc stats --\n", 20);
+    write(1, "Total mmap size allocated : ", 28);
+    if (total_mmap_size_allocated == 0)
+        write(1, "0", 1);
+    else
+        print_value(total_mmap_size_allocated);
+    write(1, "\n", 1);
+
+    write(1, "Total allocation request  : ", 28);
+    if (total_allocation_request == 0)
+        write(1, "0", 1);
+    else
+        print_value(total_allocation_request);
+    write(1, "\n", 1);
+
+    write(1, "Total free request        : ", 28);
+    if (total_free_request == 0)
+        write(1, "0", 1);
+    else
+        print_value(total_free_request);
+    write(1, "\n", 1);
     pthread_mutex_unlock(&g_mutex);
 }

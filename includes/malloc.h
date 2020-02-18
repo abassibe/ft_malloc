@@ -71,11 +71,12 @@ pthread_mutex_t g_mutex;
 
 t_env_debug g_debug;
 
-extern void *malloc(size_t size);
-extern void free(void *ptr);
-extern void *realloc(void *ptr, size_t size);
-extern void show_alloc_mem(void);
-extern void *calloc(size_t count, size_t size);
+void *malloc(size_t size);
+void free(void *ptr);
+void *realloc(void *ptr, size_t size);
+void *calloc(size_t count, size_t size);
+void show_alloc_mem(void);
+void malloc_dump(void);
 
 t_header *get_struct(void);
 t_header **first_alloc(void);
@@ -92,8 +93,6 @@ void free_tiny_small_zone(t_header *data, t_header *preview, t_meta_data *tmp, v
 t_page_type get_page_type(size_t size);
 void init_meta_data(t_header *data, size_t size);
 void malloc_stats(void);
-
-void malloc_dump(void);
 
 void *print_error(char *error, int crash, void *ret);
 

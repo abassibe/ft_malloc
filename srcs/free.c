@@ -25,11 +25,21 @@ static int is_all_free(t_meta_data *elem)
 
 void free_large_zone(t_header *data, t_header *preview, void *ptr)
 {
+    int extra;
+
+    extra = 0;
     if (!data->next_zone)
         preview->next_zone = NULL;
     else
         preview->next_zone = data->next_zone;
-    munmap(ptr, data->first_elem->size + sizeof(t_header) + sizeof(t_meta_data));
+
+    if (g_debug.malloc_guard_edges)
+        extra = getpagesize() * 2;
+    if (!g_debug.malloc_do_not_protect_postlude)
+        extra -= getpagesize();
+    if (!g_debug.malloc_do_not_protect_prelude)
+        extra -= getpagesize();
+    munmap(ptr, data->first_elem->size + sizeof(t_header) + sizeof(t_meta_data) + extra);
     return;
 }
 
@@ -78,7 +88,7 @@ static void search_targeted_address(t_header *data, void *ptr)
     }
 }
 
-extern void free(void *ptr)
+void free(void *ptr)
 {
     t_header *data;
 

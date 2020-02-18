@@ -12,7 +12,7 @@
 
 #include "../includes/libft.h"
 
-static void		itoa_neg(int *n, int *neg)
+static void itoa_neg(int *n, int *neg)
 {
 	if (*n < 0)
 	{
@@ -21,12 +21,12 @@ static void		itoa_neg(int *n, int *neg)
 	}
 }
 
-char			*ft_itoa(int n)
+char *ft_itoa(int n)
 {
-	int		tmp;
-	int		len;
-	int		neg;
-	char	*str;
+	int tmp;
+	int len;
+	int neg;
+	char *str;
 
 	if (n == -2147483648)
 		return (ft_strdup("-2147483648"));
@@ -37,7 +37,7 @@ char			*ft_itoa(int n)
 	while (tmp /= 10)
 		len++;
 	len += neg;
-	if ((str = (char*)malloc(sizeof(char) * len)) == NULL)
+	if ((str = (char *)malloc(sizeof(char) * len)) == NULL)
 		return (NULL);
 	str[--len] = '\0';
 	while (len--)

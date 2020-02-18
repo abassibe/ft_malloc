@@ -93,7 +93,7 @@ static int count_zone(t_header *data)
 	return (i);
 }
 
-extern void show_alloc_mem()
+void show_alloc_mem(void)
 {
 	t_header *data;
 

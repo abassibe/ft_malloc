@@ -1,24 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   calloc.c                                           :+:      :+:    :+:   */
+/*   test1.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/02/14 12:56:34 by abassibe          #+#    #+#             */
-/*   Updated: 2018/06/08 06:19:12 by abassibe         ###   ########.fr       */
+/*   Created: 2020/02/18 14:40:29 by abassibe          #+#    #+#             */
+/*   Updated: 2020/02/18 14:47:23 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
 #include "../includes/malloc.h"
 
-void *calloc(size_t count, size_t size)
+int main()
 {
-    void *ret;
+    int i;
+    char *addr;
 
-    pthread_mutex_lock(&g_mutex);
-    ret = malloc(count * size);
-    ft_memset(ret, '\0', (count * size));
-    pthread_mutex_unlock(&g_mutex);
-    return (ret);
+    i = 0;
+    while (i < 1024)
+    {
+        addr = (char *)malloc(1024);
+        addr[0] = 42;
+        i++;
+    }
+    return (0);
 }

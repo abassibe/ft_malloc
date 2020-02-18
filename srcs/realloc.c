@@ -60,7 +60,7 @@ static void *search_targeted_address(t_header *data, void *ptr, size_t size)
     return (NULL);
 }
 
-extern void *realloc(void *ptr, size_t size)
+void *realloc(void *ptr, size_t size)
 {
     t_header *data;
     void *ret;

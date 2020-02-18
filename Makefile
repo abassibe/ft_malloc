@@ -20,9 +20,10 @@ SRCS =	malloc.c \
 		free.c \
 		realloc.c \
 		calloc.c \
-		show_alloc_mem.c \
-		new_allocation.c \
 		first_allocation.c \
+		new_allocation.c \
+		show_alloc_mem.c \
+		malloc_dump.c \
 		utils.c
 
 OBJS = $(SRCS:.c=.o)
@@ -41,7 +42,7 @@ $(NAME): $(OBJS)
 	@ln -sf $(NAME) libft_malloc.so
 
 %.o: $(SRCPATH)%.c
-	@gcc $(FLAGS) -fPIC -o $@ -c $<
+	@gcc $(FLAGS) -fPIC -o $@ -c $< -I includes
 
 .PHONY: all clean fclean re
 
