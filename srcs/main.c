@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/ft_malloc.h"
+#include "../includes/malloc.h"
 #include <stdio.h>
 
 void print(char *s)
@@ -22,10 +22,10 @@ int main()
 {
 	char *addr;
 
-	addr = ft_malloc(16);
-	ft_free(NULL);
-	ft_free((void *)addr + 5);
-	if (ft_realloc((void *)addr + 5, 10) == NULL)
+	addr = malloc(16);
+	free(NULL);
+	free((void *)addr + 5);
+	if (realloc((void *)addr + 5, 10) == NULL)
 		print("Bonjours\n");
 	return (0);
 }

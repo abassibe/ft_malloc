@@ -10,17 +10,17 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/ft_malloc.h"
+#include "../includes/malloc.h"
 
-static void fill_tab(t_header **tab, t_header *g_data)
+static void fill_tab(t_header **tab, t_header *data)
 {
 	int i;
 
 	i = 0;
-	while (g_data)
+	while (data)
 	{
-		tab[i] = g_data;
-		g_data = g_data->next_zone;
+		tab[i] = data;
+		data = data->next_zone;
 		i++;
 	}
 	tab[i] = NULL;
@@ -54,14 +54,14 @@ static void print(t_header **tab)
 	ft_printf("Total : %d octets\n", total);
 }
 
-static void sort_by_address(t_header *g_data, int amount_of_zone)
+static void sort_by_address(t_header *data, int amount_of_zone)
 {
 	t_header *tmp;
 	t_header *tab[amount_of_zone + 1];
 	int i;
 
 	i = 0;
-	fill_tab(tab, g_data);
+	fill_tab(tab, data);
 	while (amount_of_zone > 0)
 	{
 		if (i < amount_of_zone && tab[i + 1] && (&*tab[i] > &*tab[i + 1]))
@@ -80,14 +80,14 @@ static void sort_by_address(t_header *g_data, int amount_of_zone)
 	print(tab);
 }
 
-static int count_zone(t_header *g_data)
+static int count_zone(t_header *data)
 {
 	int i;
 
 	i = 0;
-	while (g_data)
+	while (data)
 	{
-		g_data = g_data->next_zone;
+		data = data->next_zone;
 		i++;
 	}
 	return (i);
@@ -95,15 +95,15 @@ static int count_zone(t_header *g_data)
 
 extern void show_alloc_mem()
 {
-	t_header *g_data;
+	t_header *data;
 
-	g_data = get_struct();
-	if (!g_data)
+	data = get_struct();
+	if (!data)
 	{
 		print_error("No allocation yet.\n", 0, NULL);
 		return;
 	}
 	pthread_mutex_lock(&g_mutex);
-	sort_by_address(g_data, count_zone(g_data));
+	sort_by_address(data, count_zone(data));
 	pthread_mutex_unlock(&g_mutex);
 }

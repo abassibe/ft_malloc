@@ -16,10 +16,10 @@ endif
 
 NAME = libft_malloc_$(HOSTTYPE).so
 
-SRCS =	ft_malloc.c \
-		ft_free.c \
-		ft_realloc.c \
-		ft_calloc.c \
+SRCS =	malloc.c \
+		free.c \
+		realloc.c \
+		calloc.c \
 		show_alloc_mem.c \
 		new_allocation.c \
 		first_allocation.c \
@@ -31,14 +31,17 @@ SRCPATH = ./srcs/
 
 FLAGS = -Wall -Wextra -Werror
 
+.PHONY: all clean fclean re
+
 all: $(NAME)
 
 $(NAME): $(OBJS)
 	@make -C libft
-	@gcc $(FLAGS) $(OBJS) libft/libft.a -o $(NAME)
+	@gcc -shared $(FLAGS) $(OBJS) libft/libft.a -o $(NAME)
+	@ln -sf $(NAME) libft_malloc.so
 
 %.o: $(SRCPATH)%.c
-	@gcc $(FLAGS) -c $< -I includes
+	@gcc $(FLAGS) -fPIC -o $@ -c $<
 
 .PHONY: all clean fclean re
 

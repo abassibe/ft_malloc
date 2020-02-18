@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_free.c                                          :+:      :+:    :+:   */
+/*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/ft_malloc.h"
+#include "../includes/malloc.h"
 
 static int is_all_free(t_meta_data *elem)
 {
@@ -23,64 +23,64 @@ static int is_all_free(t_meta_data *elem)
     return (1);
 }
 
-void free_large_zone(t_header *g_data, t_header *preview, void *ptr)
+void free_large_zone(t_header *data, t_header *preview, void *ptr)
 {
-    if (!g_data->next_zone)
+    if (!data->next_zone)
         preview->next_zone = NULL;
     else
-        preview->next_zone = g_data->next_zone;
-    munmap(ptr, g_data->first_elem->size + sizeof(t_header) + sizeof(t_meta_data));
+        preview->next_zone = data->next_zone;
+    munmap(ptr, data->first_elem->size + sizeof(t_header) + sizeof(t_meta_data));
     return;
 }
 
-void free_tiny_small_zone(t_header *g_data, t_header *preview, t_meta_data *tmp, void *ptr)
+void free_tiny_small_zone(t_header *data, t_header *preview, t_meta_data *tmp, void *ptr)
 {
     int size_to_free;
 
     tmp->free = 1;
-    if (is_all_free(g_data->first_elem))
+    if (is_all_free(data->first_elem))
     {
-        if (!g_data->next_zone)
+        if (!data->next_zone)
             preview->next_zone = NULL;
         else
-            preview->next_zone = g_data->next_zone;
-        size_to_free = g_data->type == TINY ? MAX_TINY_ZONE : MAX_SMALL_ZONE;
+            preview->next_zone = data->next_zone;
+        size_to_free = data->type == TINY ? MAX_TINY_ZONE : MAX_SMALL_ZONE;
         munmap(ptr, size_to_free);
     }
     return;
 }
 
-static void search_targeted_address(t_header *g_data, void *ptr)
+static void search_targeted_address(t_header *data, void *ptr)
 {
     t_header *preview;
     t_meta_data *tmp;
 
-    preview = g_data;
-    while (g_data)
+    preview = data;
+    while (data)
     {
-        tmp = g_data->first_elem;
+        tmp = data->first_elem;
         while (tmp)
         {
-            if (g_data->type == LARGE && tmp->addr == ptr)
+            if (data->type == LARGE && tmp->addr == ptr)
             {
-                free_large_zone(g_data, preview, ptr);
+                free_large_zone(data, preview, ptr);
                 return;
             }
             else if (tmp->addr == ptr)
             {
-                free_tiny_small_zone(g_data, preview, tmp, ptr);
+                free_tiny_small_zone(data, preview, tmp, ptr);
                 return;
             }
             tmp = tmp->next;
         }
-        preview = g_data;
-        g_data = g_data->next_zone;
+        preview = data;
+        data = data->next_zone;
     }
 }
 
-extern void ft_free(void *ptr)
+extern void free(void *ptr)
 {
-    t_header *g_data;
+    t_header *data;
 
     pthread_mutex_lock(&g_mutex);
     total_free_request++;
@@ -89,12 +89,12 @@ extern void ft_free(void *ptr)
         print_error("Trying to free NULL pointer.\n", 0, NULL);
         return;
     }
-    g_data = get_struct();
-    if (!g_data)
+    data = get_struct();
+    if (!data)
     {
         print_error("No allocation yet.\n", 0, NULL);
         return;
     }
-    search_targeted_address(g_data, ptr);
+    search_targeted_address(data, ptr);
     pthread_mutex_unlock(&g_mutex);
 }

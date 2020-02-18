@@ -10,13 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/ft_malloc.h"
+#include "../includes/malloc.h"
 
 t_header **first_alloc(void)
 {
-    static t_header *g_data = NULL;
+    static t_header *data = NULL;
 
-    return (&g_data);
+    return (&data);
 }
 
 t_header *get_struct(void)
@@ -43,23 +43,24 @@ t_header *allocate_large(t_header *page, size_t size)
 t_header *init_header(size_t size)
 {
     t_page_type type;
-    t_header *g_data;
+    t_header *data;
 
+    data = NULL;
     type = get_page_type(size);
     if (type == TINY)
-        g_data = mmap(0, MAX_TINY_ZONE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+        data = mmap(0, MAX_TINY_ZONE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
     else if (type == SMALL)
-        g_data = mmap(0, MAX_SMALL_ZONE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+        data = mmap(0, MAX_SMALL_ZONE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
     else
-        g_data = allocate_large(g_data, size);
-    if (g_data == MAP_FAILED)
+        data = allocate_large(data, size);
+    if (data == MAP_FAILED)
         return (print_error("Failing memory allocation.\n", 1, NULL));
-    g_data->next_zone = NULL;
-    g_data->type = type;
-    init_meta_data(g_data, size);
-    *first_alloc() = g_data;
+    data->next_zone = NULL;
+    data->type = type;
+    init_meta_data(data, size);
+    *first_alloc() = data;
     pthread_mutex_lock(&g_mutex);
     total_mmap_size_allocated += size;
     pthread_mutex_unlock(&g_mutex);
-    return (g_data);
+    return (data);
 }

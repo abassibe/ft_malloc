@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_malloc.h                                        :+:      :+:    :+:   */
+/*   malloc.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_MALLOC_H
-#define FT_MALLOC_H
+#ifndef MALLOC_H
+#define MALLOC_H
 
 #include <sys/mman.h>
 #include <unistd.h>
@@ -71,26 +71,26 @@ pthread_mutex_t g_mutex;
 
 t_env_debug g_debug;
 
-extern void *ft_malloc(size_t size);
-extern void ft_free(void *ptr);
-extern void *ft_realloc(void *ptr, size_t size);
+extern void *malloc(size_t size);
+extern void free(void *ptr);
+extern void *realloc(void *ptr, size_t size);
 extern void show_alloc_mem(void);
-extern void *ft_calloc(size_t count, size_t size);
+extern void *calloc(size_t count, size_t size);
 
 t_header *get_struct(void);
 t_header **first_alloc(void);
 t_header *init_header(size_t size);
 t_header *allocate_large(t_header *page, size_t size);
 
-void *create_allocation(t_header *g_data, size_t size, t_page_type type);
+void *create_allocation(t_header *data, size_t size, t_page_type type);
 int looking_for_place(t_meta_data *region, t_page_type type);
 t_header *new_zone(t_page_type type, size_t size);
 
-void free_large_zone(t_header *g_data, t_header *preview, void *ptr);
-void free_tiny_small_zone(t_header *g_data, t_header *preview, t_meta_data *tmp, void *ptr);
+void free_large_zone(t_header *data, t_header *preview, void *ptr);
+void free_tiny_small_zone(t_header *data, t_header *preview, t_meta_data *tmp, void *ptr);
 
 t_page_type get_page_type(size_t size);
-void init_meta_data(t_header *g_data, size_t size);
+void init_meta_data(t_header *data, size_t size);
 void malloc_stats(void);
 
 void malloc_dump(void);

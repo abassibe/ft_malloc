@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/ft_malloc.h"
+#include "../includes/malloc.h"
 
 /* Alloue une nouvelle zone suivant le type d'allocation. */
 t_header *new_zone(t_page_type type, size_t size)
@@ -73,13 +73,13 @@ t_meta_data *create_new_block(t_meta_data *current_block, size_t size)
     return (new_block->addr);
 }
 
-void *create_allocation(t_header *g_data, size_t size, t_page_type type)
+void *create_allocation(t_header *data, size_t size, t_page_type type)
 {
     t_meta_data *current_block;
     int count;
     int max_alloc_by_zone;
 
-    current_block = g_data->first_elem;
+    current_block = data->first_elem;
     count = 0;
     max_alloc_by_zone = (type == TINY ? MAX_TINY_ZONE : MAX_SMALL_ZONE) / ((type == TINY ? MAX_TINY_SIZE : MAX_SMALL_SIZE) + sizeof(t_meta_data));
     while (count < max_alloc_by_zone)

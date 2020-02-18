@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_malloc.c                                        :+:      :+:    :+:   */
+/*   malloc.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/ft_malloc.h"
+#include "../includes/malloc.h"
 
 unsigned long total_mmap_size_allocated = 0;
 
@@ -46,13 +46,13 @@ static void get_env_debug()
 }
 
 /* En cas de nouvelle allocation, vérifie l'existence d'une zone et la place par type. Réoriente au besoin. */
-static void *new_allocation(t_header *g_data, size_t size)
+static void *new_allocation(t_header *data, size_t size)
 {
 	t_header *header;
 	t_page_type type;
 
 	type = get_page_type(size);
-	header = g_data;
+	header = data;
 	while (header)
 	{
 		if (header->type == type && looking_for_place(header->first_elem, type) != -1)
@@ -66,9 +66,9 @@ static void *new_allocation(t_header *g_data, size_t size)
 }
 
 /* Renvoie un pointeur sur une zone mémoire allouée de size octet */
-extern void *ft_malloc(size_t size)
+extern void *malloc(size_t size)
 {
-	t_header *g_data;
+	t_header *data;
 	void *ret;
 
 	pthread_mutex_lock(&g_mutex);
@@ -76,10 +76,10 @@ extern void *ft_malloc(size_t size)
 	get_env_debug();
 	if (size <= 0)
 		return (print_error("Size <= 0.\n", 1, NULL));
-	g_data = get_struct();
-	if (!g_data)
+	data = get_struct();
+	if (!data)
 		return (&*init_header(size)->first_elem->addr);
-	if (!(ret = new_allocation(g_data, size)))
+	if (!(ret = new_allocation(data, size)))
 		return (print_error("Failure of the memory allocation.\n", 1, NULL));
 	pthread_mutex_unlock(&g_mutex);
 	return (&*ret);
