@@ -87,12 +87,17 @@ void *create_allocation(t_header *data, size_t size, t_page_type type);
 int looking_for_place(t_meta_data *region, t_page_type type);
 t_header *new_zone(t_page_type type, size_t size);
 
-void free_large_zone(t_header *data, t_header *preview, void *ptr);
-void free_tiny_small_zone(t_header *data, t_header *preview, t_meta_data *tmp, void *ptr);
+void free_large_zone(t_header *data, t_header *preview);
+void free_tiny_small_zone(t_header *data, t_header *preview, t_meta_data *tmp);
 
 t_page_type get_page_type(size_t size);
 void init_meta_data(t_header *data, size_t size);
 void malloc_stats(void);
+int print_bloc_address(t_meta_data *tmp);
+
+void print_value(unsigned long val);
+void print_address(unsigned long val);
+void useless_layer(unsigned char val, char *color);
 
 void *print_error(char *error, int crash, void *ret);
 

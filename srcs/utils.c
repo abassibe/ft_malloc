@@ -12,7 +12,17 @@
 
 #include "../includes/malloc.h"
 
-/* Retourn le type d'allocation */
+int print_bloc_address(t_meta_data *tmp)
+{
+    print_address((unsigned long)tmp->addr);
+    write(1, " - ", 3);
+    print_address((unsigned long)tmp->addr + tmp->size);
+    write(1, " : ", 3);
+    ft_putnbr((int)tmp->size);
+    write(1, " octets\n", 8);
+    return (tmp->size);
+}
+
 t_page_type get_page_type(size_t size)
 {
     if (size <= MAX_TINY_SIZE)
@@ -35,21 +45,6 @@ void init_meta_data(t_header *data, size_t size)
     meta_data->size = size;
     meta_data->free = 0;
     data->first_elem = meta_data;
-}
-
-/* Itoa without malloc */
-static void print_value(unsigned long val)
-{
-    char c[1];
-
-    c[0] = 0;
-    if (val > 0)
-    {
-        c[0] = val % 10 + '0';
-        val = val / 10;
-        print_value(val);
-    }
-    write(1, c, 1);
 }
 
 void malloc_stats(void)

@@ -25,7 +25,7 @@ t_header *new_zone(t_page_type type, size_t size)
     else
         new_page = allocate_large(new_page, size);
     if (new_page == MAP_FAILED)
-        return (print_error("Failing memory allocation.\n", 1, NULL));
+        return (print_error("", 1, NULL));
     new_page->next_zone = NULL;
     new_page->type = type;
     init_meta_data(new_page, size);

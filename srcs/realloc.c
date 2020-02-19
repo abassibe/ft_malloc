@@ -19,8 +19,8 @@ static void *realloc_large(t_header *data, t_meta_data *meta_data, t_header *pre
     if (meta_data->size >= size)
         return (meta_data->addr);
     ret = malloc(size);
-    ret = ft_memcpy(ret, meta_data->addr, size);
-    free_large_zone(data, preview, meta_data->addr);
+    ret = ft_memcpy(ret, meta_data->addr, meta_data->size);
+    free_large_zone(data, preview);
     return (ret);
 }
 
@@ -32,7 +32,7 @@ static void *realloc_tiny_small(t_header *data, t_meta_data *meta_data, t_header
         return (meta_data->addr);
     ret = malloc(size);
     ret = ft_memcpy(ret, meta_data->addr, size);
-    free_tiny_small_zone(data, preview, meta_data, meta_data->addr);
+    free_tiny_small_zone(data, preview, meta_data);
     return (ret);
 }
 
@@ -56,7 +56,7 @@ static void *search_targeted_address(t_header *data, void *ptr, size_t size)
         preview = data;
         data = data->next_zone;
     }
-    print_error("Address not found\n", 1, NULL);
+    print_error("", 1, NULL);
     return (NULL);
 }
 

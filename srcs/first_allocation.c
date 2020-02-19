@@ -31,9 +31,9 @@ t_header *allocate_large(t_header *page, size_t size)
     extra = 0;
     if (g_debug.malloc_guard_edges)
         extra = getpagesize() * 2;
-    if (!g_debug.malloc_do_not_protect_postlude)
+    if (g_debug.malloc_guard_edges && !g_debug.malloc_do_not_protect_postlude)
         extra -= getpagesize();
-    if (!g_debug.malloc_do_not_protect_prelude)
+    if (g_debug.malloc_guard_edges && !g_debug.malloc_do_not_protect_prelude)
         extra -= getpagesize();
     page = mmap(0, size + sizeof(t_header) + sizeof(t_meta_data) + extra, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
     return (page);

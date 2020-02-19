@@ -26,15 +26,5 @@ int main()
         free(addr);
         i++;
     }
-    t_header *data;
-    data = get_struct();
-    i = 0;
-    while (data)
-    {
-        data = data->next_zone;
-        i++;
-    }
-    //show_alloc_mem();
-    //malloc_dump();
     return (0);
 }

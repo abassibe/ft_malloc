@@ -1,31 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test1.c                                            :+:      :+:    :+:   */
+/*   test3-2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/02/18 14:40:29 by abassibe          #+#    #+#             */
-/*   Updated: 2020/02/18 14:47:23 by abassibe         ###   ########.fr       */
+/*   Created: 2020/02/19 13:43:35 by abassibe          #+#    #+#             */
+/*   Updated: 2020/02/19 13:47:48 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include "../includes/malloc.h"
 
+#define M (1024 * 1024)
+
+void print(char *s)
+{
+    write(1, s, strlen(s));
+}
+
 int main()
 {
-    int i;
-    char *addr;
+    char *addr1;
+    char *addr2;
+    char *addr3;
 
-    i = 0;
-    while (i < 1024)
-    {
-        addr = (char *)malloc(1024);
-        addr[0] = 42;
-        i++;
-    }
-    show_alloc_mem();
-
+    addr1 = (char *)malloc(16 * M);
+    strcpy(addr1, "Bonjour\n");
+    print(addr1);
+    addr2 = (char *)malloc(16 * M);
+    addr3 = (char *)realloc(addr1, 128 * M);
+    addr3[127 * M] = 42;
+    print(addr3);
     return (0);
 }

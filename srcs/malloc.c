@@ -75,12 +75,12 @@ void *malloc(size_t size)
 	total_allocation_request++;
 	get_env_debug();
 	if (size <= 0)
-		return (print_error("Size <= 0.\n", 1, NULL));
+		return (print_error("", 1, NULL));
 	data = get_struct();
 	if (!data)
 		return (&*init_header(size)->first_elem->addr);
 	if (!(ret = new_allocation(data, size)))
-		return (print_error("Failure of the memory allocation.\n", 1, NULL));
+		return (print_error("", 1, NULL));
 	pthread_mutex_unlock(&g_mutex);
 	return (&*ret);
 }

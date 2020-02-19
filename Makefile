@@ -24,7 +24,8 @@ SRCS =	malloc.c \
 		new_allocation.c \
 		show_alloc_mem.c \
 		malloc_dump.c \
-		utils.c
+		utils.c \
+		print.c
 
 OBJS = $(SRCS:.c=.o)
 

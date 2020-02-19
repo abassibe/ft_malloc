@@ -1,31 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test1.c                                            :+:      :+:    :+:   */
+/*   test4.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/02/18 14:40:29 by abassibe          #+#    #+#             */
-/*   Updated: 2020/02/18 14:47:23 by abassibe         ###   ########.fr       */
+/*   Created: 2020/02/19 13:46:39 by abassibe          #+#    #+#             */
+/*   Updated: 2020/02/19 13:48:23 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include "../includes/malloc.h"
 
+void print(char *s)
+{
+    write(1, s, strlen(s));
+}
+
 int main()
 {
-    int i;
     char *addr;
 
-    i = 0;
-    while (i < 1024)
-    {
-        addr = (char *)malloc(1024);
-        addr[0] = 42;
-        i++;
-    }
-    show_alloc_mem();
-
+    addr = malloc(16);
+    free(NULL);
+    free((void *)addr + 5);
+    if (realloc((void *)addr + 5, 10) == NULL)
+        print("Bonjour\n");
     return (0);
 }

@@ -20,16 +20,16 @@ static void print_large(t_header *data, size_t len)
     while (i < len)
     {
         if (i % 32 == 0)
-            ft_printf("\033[0;0m%p ", &((unsigned char *)data)[i]);
+            print_address((unsigned long)&((unsigned char *)data)[i]);
         if (i < sizeof(t_header))
-            ft_printf("\033[0;31m% 3.2x", ((unsigned char *)data)[i]);
+            useless_layer(((unsigned char *)data)[i], "\033[0;31m");
         else if (i < sizeof(t_header) + sizeof(t_meta_data))
-            ft_printf("\033[0;33m% 3.2x", ((unsigned char *)data)[i]);
+            useless_layer(((unsigned char *)data)[i], "\033[0;33m");
         else if ((!g_debug.malloc_do_not_protect_prelude && g_debug.malloc_guard_edges && i < sizeof(t_header) + sizeof(t_meta_data) + getpagesize()) ||
                  (!g_debug.malloc_do_not_protect_postlude && g_debug.malloc_guard_edges && i > len - getpagesize()))
-            ft_printf("\033[1;31m% 3.2x", ((unsigned char *)data)[i]);
+            useless_layer(((unsigned char *)data)[i], "\033[0;31m");
         else
-            ft_printf("\033[0;32m% 3.2x", ((unsigned char *)data)[i]);
+            useless_layer(((unsigned char *)data)[i], "\033[0;32m");
         if (i > 0 && i + 1 < len && (i + 1) % 4 == 0)
             write(1, " ", 1);
         if (i > 0 && i + 1 < len && ((i + 1) % 32 == 0))
@@ -46,20 +46,20 @@ static void print_tiny_small_next(t_meta_data *tmp, size_t len)
     while (tmp && i < len + sizeof(t_meta_data))
     {
         if (i % 32 == 0)
-            ft_printf("\033[0;0m%p ", &((unsigned char *)tmp)[i]);
+            print_address((unsigned long)&((unsigned char *)tmp)[i]);
         if (i < sizeof(t_meta_data))
-            ft_printf("\033[0;33m% 3.2x", ((unsigned char *)tmp)[i]);
+            useless_layer(((unsigned char *)tmp)[i], "\033[0;33m");
         else
-            ft_printf("\033[0;32m% 3.2x", ((unsigned char *)tmp)[i]);
+            useless_layer(((unsigned char *)tmp)[i], "\033[0;32m");
         if (i > 0 && i + 1 < len + sizeof(t_meta_data) && (i + 1) % 4 == 0)
             write(1, " ", 1);
         if (i > 0 && i + 1 < len + sizeof(t_meta_data) && ((i + 1) % 32 == 0))
-            write(1, "\n", 1);
+            write(1, "\033[0;0m\n", 7);
         i++;
         if (i >= len + sizeof(t_meta_data))
         {
             i = 0;
-            write(1, "\n", 1);
+            write(1, "\033[0;0m\n", 7);
             tmp = tmp->next;
         }
     }
@@ -73,8 +73,8 @@ static void print_tiny_small(t_header *data, size_t len)
     while (i < sizeof(t_header))
     {
         if (i % 32 == 0)
-            ft_printf("\033[0;0m%p ", &((unsigned char *)data)[i]);
-        ft_printf("\033[0;31m% 3.2x", ((unsigned char *)data)[i]);
+            print_address((unsigned long)&((unsigned char *)data)[i]);
+        useless_layer(((unsigned char *)data)[i], "\033[0;31m");
         if (i > 0 && i + 1 < len && (i + 1) % 4 == 0)
             write(1, " ", 1);
         i++;
@@ -86,12 +86,14 @@ static void print_tiny_small(t_header *data, size_t len)
 static void print(t_header *data)
 {
     size_t len;
-    int page_count;
+    unsigned long page_count;
 
     page_count = 1;
     while (data)
     {
-        ft_printf("PAGE #%d :\n", page_count);
+        write(1, "PAGE #", 6);
+        print_value(page_count);
+        write(1, " :\n", 3);
         if (data->type == LARGE)
         {
             len = data->first_elem->size + sizeof(t_header) + sizeof(t_meta_data);
@@ -103,7 +105,9 @@ static void print(t_header *data)
             print_tiny_small(data, MAX_TINY_SIZE);
         data = data->next_zone;
         page_count++;
-        ft_printf("\033[0;0m\nPress enter to continue to the next page...\n");
+        if (!data)
+            break;
+        write(1, "\033[0;0m\nPress enter to continue to the next page...\n", 51);
         getchar();
     }
 }
@@ -119,13 +123,12 @@ void malloc_dump(void)
         return;
     }
     pthread_mutex_lock(&g_mutex);
-    ft_printf("---INFOS---\n");
-    ft_printf("\033[0;31mZone's header\n");
-    ft_printf("\033[0;33mBlock's header\n");
-    ft_printf("\033[0;32mUser memory allocated\n");
-    ft_printf("\033[1;31mGuard page\n");
-    ft_printf("\033[0;0m");
-    ft_printf("-----------\n\n");
+    write(1, "---INFOS---\n", 12);
+    write(1, "\033[0;31mHeader zone\n", 19);
+    write(1, "\033[0;33mHeader block\n", 20);
+    write(1, "\033[0;32mUser memory allocated\n", 29);
+    write(1, "\033[1;31mGuard page\n", 18);
+    write(1, "\033[0;0m-----------\n\n", 19);
     print(data);
     pthread_mutex_unlock(&g_mutex);
 }

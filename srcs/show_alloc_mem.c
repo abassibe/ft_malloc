@@ -26,32 +26,31 @@ static void fill_tab(t_header **tab, t_header *data)
 	tab[i] = NULL;
 }
 
-static void print(t_header **tab)
+static int print(t_header **tab)
 {
-	int i;
 	int total;
 	t_meta_data *tmp;
 
-	i = 0;
 	total = 0;
-	while (tab[i])
+	while (*tab)
 	{
-		if (tab[i]->type == TINY)
-			ft_printf("TINY : %p\n", tab[i]);
-		else if (tab[i]->type == SMALL)
-			ft_printf("SMALL : %p\n", tab[i]);
+		if ((*tab)->type == TINY)
+			write(1, "TINY : ", 7);
+		else if ((*tab)->type == SMALL)
+			write(1, "SMALL : ", 7);
 		else
-			ft_printf("LARGE : %p\n", tab[i]);
-		tmp = tab[i]->first_elem;
+			write(1, "LARGE : ", 7);
+		print_address((unsigned long)*tab);
+		write(1, "\n", 1);
+		tmp = (*tab)->first_elem;
 		while (tmp)
 		{
-			ft_printf("%p - %p : %lu octets\n", tmp->addr, tmp->addr + tmp->size, tmp->size);
-			total += tmp->size;
+			total += print_bloc_address(tmp);
 			tmp = tmp->next;
 		}
-		i++;
+		tab++;
 	}
-	ft_printf("Total : %d octets\n", total);
+	return (total);
 }
 
 static void sort_by_address(t_header *data, int amount_of_zone)
@@ -77,7 +76,10 @@ static void sort_by_address(t_header *data, int amount_of_zone)
 		}
 		i++;
 	}
-	print(tab);
+	i = print(tab);
+	write(1, "Total : ", 8);
+	ft_putnbr(i);
+	write(1, " octets\n", 8);
 }
 
 static int count_zone(t_header *data)
@@ -100,7 +102,7 @@ void show_alloc_mem(void)
 	data = get_struct();
 	if (!data)
 	{
-		print_error("No allocation yet.\n", 0, NULL);
+		print_error("", 0, NULL);
 		return;
 	}
 	pthread_mutex_lock(&g_mutex);

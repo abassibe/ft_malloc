@@ -23,11 +23,13 @@ static int is_all_free(t_meta_data *elem)
     return (1);
 }
 
-void free_large_zone(t_header *data, t_header *preview, void *ptr)
+void free_large_zone(t_header *data, t_header *preview)
 {
     int extra;
 
     extra = 0;
+    if (data == preview)
+        return;
     if (!data->next_zone)
         preview->next_zone = NULL;
     else
@@ -35,27 +37,27 @@ void free_large_zone(t_header *data, t_header *preview, void *ptr)
 
     if (g_debug.malloc_guard_edges)
         extra = getpagesize() * 2;
-    if (!g_debug.malloc_do_not_protect_postlude)
+    if (g_debug.malloc_guard_edges && !g_debug.malloc_do_not_protect_postlude)
         extra -= getpagesize();
-    if (!g_debug.malloc_do_not_protect_prelude)
+    if (g_debug.malloc_guard_edges && !g_debug.malloc_do_not_protect_prelude)
         extra -= getpagesize();
-    munmap(ptr, data->first_elem->size + sizeof(t_header) + sizeof(t_meta_data) + extra);
+    munmap(data, data->first_elem->size + sizeof(t_header) + sizeof(t_meta_data) + extra);
     return;
 }
 
-void free_tiny_small_zone(t_header *data, t_header *preview, t_meta_data *tmp, void *ptr)
+void free_tiny_small_zone(t_header *data, t_header *preview, t_meta_data *tmp)
 {
     int size_to_free;
 
     tmp->free = 1;
-    if (is_all_free(data->first_elem))
+    if (is_all_free(data->first_elem) && data != preview)
     {
         if (!data->next_zone)
             preview->next_zone = NULL;
         else
             preview->next_zone = data->next_zone;
         size_to_free = data->type == TINY ? MAX_TINY_ZONE : MAX_SMALL_ZONE;
-        munmap(ptr, size_to_free);
+        munmap(data, size_to_free);
     }
     return;
 }
@@ -73,12 +75,12 @@ static void search_targeted_address(t_header *data, void *ptr)
         {
             if (data->type == LARGE && tmp->addr == ptr)
             {
-                free_large_zone(data, preview, ptr);
+                free_large_zone(data, preview);
                 return;
             }
             else if (tmp->addr == ptr)
             {
-                free_tiny_small_zone(data, preview, tmp, ptr);
+                free_tiny_small_zone(data, preview, tmp);
                 return;
             }
             tmp = tmp->next;
@@ -96,13 +98,13 @@ void free(void *ptr)
     total_free_request++;
     if (!ptr)
     {
-        print_error("Trying to free NULL pointer.\n", 0, NULL);
+        print_error("", 0, NULL);
         return;
     }
     data = get_struct();
     if (!data)
     {
-        print_error("No allocation yet.\n", 0, NULL);
+        print_error("", 0, NULL);
         return;
     }
     search_targeted_address(data, ptr);
