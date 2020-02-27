@@ -6,17 +6,17 @@
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/18 14:40:29 by abassibe          #+#    #+#             */
-/*   Updated: 2020/02/18 14:47:23 by abassibe         ###   ########.fr       */
+/*   Updated: 2020/02/27 02:35:54 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int main()
+int	main()
 {
-    int i;
-    char *addr;
+	int		i;
+	char	*addr;
 
-    i = 0;
-    while (i < 1024)
-        i++;
-    return (0);
+	i = 0;
+	while (i < 1024)
+		i++;
+	return (0);
 }

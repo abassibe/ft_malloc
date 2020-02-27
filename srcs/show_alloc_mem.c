@@ -6,15 +6,15 @@
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 03:44:19 by abassibe          #+#    #+#             */
-/*   Updated: 2018/06/08 03:39:53 by abassibe         ###   ########.fr       */
+/*   Updated: 2020/02/27 01:26:48 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/malloc.h"
 
-static void fill_tab(t_header **tab, t_header *data)
+static void	fill_tab(t_header **tab, t_header *data)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (data)
@@ -26,10 +26,10 @@ static void fill_tab(t_header **tab, t_header *data)
 	tab[i] = NULL;
 }
 
-static int print(t_header **tab)
+static int	print(t_header **tab)
 {
-	int total;
-	t_meta_data *tmp;
+	int			total;
+	t_meta_data	*tmp;
 
 	total = 0;
 	while (*tab)
@@ -53,11 +53,11 @@ static int print(t_header **tab)
 	return (total);
 }
 
-static void sort_by_address(t_header *data, int amount_of_zone)
+static void	sort_by_address(t_header *data, int amount_of_zone)
 {
-	t_header *tmp;
-	t_header *tab[amount_of_zone + 1];
-	int i;
+	t_header	*tmp;
+	t_header	*tab[amount_of_zone + 1];
+	int			i;
 
 	i = 0;
 	fill_tab(tab, data);
@@ -82,9 +82,9 @@ static void sort_by_address(t_header *data, int amount_of_zone)
 	write(1, " octets\n", 8);
 }
 
-static int count_zone(t_header *data)
+static int	count_zone(t_header *data)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (data)
@@ -95,15 +95,15 @@ static int count_zone(t_header *data)
 	return (i);
 }
 
-void show_alloc_mem(void)
+void		show_alloc_mem(void)
 {
-	t_header *data;
+	t_header	*data;
 
 	data = get_struct();
 	if (!data)
 	{
 		print_error("", 0, NULL);
-		return;
+		return ;
 	}
 	pthread_mutex_lock(&g_mutex);
 	sort_by_address(data, count_zone(data));

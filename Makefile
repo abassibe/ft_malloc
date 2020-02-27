@@ -6,7 +6,7 @@
 #    By: abassibe <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/02/10 12:45:46 by abassibe          #+#    #+#              #
-#    Updated: 2018/06/06 03:07:42 by abassibe         ###   ########.fr        #
+#    Updated: 2020/02/27 04:25:12 by abassibe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,11 +39,11 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	@make -C libft
-	@gcc -shared $(FLAGS) $(OBJS) libft/libft.a -o $(NAME)
+	@gcc -shared -fPIC $(FLAGS) $(OBJS) libft/libft.a -o $(NAME)
 	@ln -sf $(NAME) libft_malloc.so
 
 %.o: $(SRCPATH)%.c
-	@gcc $(FLAGS) -fPIC -o $@ -c $< -I includes
+	@gcc $(FLAGS) -o $@ -c $< -I includes
 
 .PHONY: all clean fclean re
 
