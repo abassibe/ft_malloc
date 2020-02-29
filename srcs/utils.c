@@ -6,13 +6,18 @@
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/13 02:30:40 by abassibe          #+#    #+#             */
-/*   Updated: 2020/02/27 04:32:07 by abassibe         ###   ########.fr       */
+/*   Updated: 2020/02/29 06:52:16 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/malloc.h"
 
-int			print_bloc_address(t_meta_data *tmp)
+size_t			padding(size_t val)
+{
+	return (((val / PADDING) + 1) * PADDING);
+}
+
+int				print_bloc_address(t_meta_data *tmp)
 {
 	print_address((unsigned long)tmp->addr);
 	write(1, " - ", 3);
@@ -23,7 +28,7 @@ int			print_bloc_address(t_meta_data *tmp)
 	return (tmp->size);
 }
 
-t_page_type	get_page_type(size_t size)
+t_page_type		get_page_type(size_t size)
 {
 	if (size <= MAX_TINY_SIZE)
 		return (TINY);
@@ -32,17 +37,21 @@ t_page_type	get_page_type(size_t size)
 	return (LARGE);
 }
 
-void		init_meta_data(t_header *data, size_t size, t_page_type type)
+void			init_meta_data(t_header *data, size_t size, t_page_type type)
 {
-	t_meta_data	*meta_data;
+	t_meta_data		*meta_data;
+	int				padd;
 
 	data->type = type;
-	meta_data = (t_meta_data *)((char *)data + sizeof(t_header));
+	data->next_zone = NULL;
+	data->first_elem = NULL;
+	padd = padding(sizeof(t_header));
+	meta_data = (t_meta_data *)((char *)data + padd);
+	padd = padding(sizeof(t_meta_data));
 	if (data->type == LARGE && g_debug.guard_edges)
-		meta_data->addr = (void *)((char *)data + sizeof(t_meta_data) +
-				sizeof(t_header) + getpagesize());
-	meta_data->addr = (void *)((char *)data +
-			sizeof(t_meta_data) + sizeof(t_header));
+		meta_data->addr = (void *)((char *)meta_data + padd + getpagesize());
+	else
+		meta_data->addr = (void *)((char *)meta_data + padd);
 	meta_data->prev = NULL;
 	meta_data->next = NULL;
 	meta_data->size = size;
@@ -50,7 +59,7 @@ void		init_meta_data(t_header *data, size_t size, t_page_type type)
 	data->first_elem = meta_data;
 }
 
-void		malloc_stats(void)
+void			malloc_stats(void)
 {
 	pthread_mutex_lock(&g_mutex);
 	write(1, "\n-- malloc stats --\n", 20);

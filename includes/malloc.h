@@ -6,7 +6,7 @@
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 01:54:47 by abassibe          #+#    #+#             */
-/*   Updated: 2020/02/27 04:31:52 by abassibe         ###   ########.fr       */
+/*   Updated: 2020/02/29 06:56:19 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # define MIN_ALLOC_BY_ZONE 100
 # define MAX_TINY_SIZE 128
 # define MAX_SMALL_SIZE 1024
+# define PADDING 16
 
 typedef enum		e_size_type
 {
@@ -41,9 +42,9 @@ typedef struct		s_meta_data
 
 typedef struct		s_header
 {
-	struct s_header	*next_zone;
-	t_meta_data		*first_elem;
-	t_page_type		type;
+	struct s_header		*next_zone;
+	t_meta_data			*first_elem;
+	t_page_type			type;
 }					t_header;
 
 typedef struct		s_env_debug
@@ -61,7 +62,7 @@ extern int			g_total_free_request;
 
 pthread_mutex_t		g_mutex;
 
-t_env_debug			g_debug;
+extern t_env_debug	g_debug;
 
 void				*malloc(size_t size);
 void				free(void *ptr);
@@ -75,10 +76,10 @@ t_header			**first_alloc(void);
 t_header			*init_header(size_t size);
 t_header			*allocate_large(t_header *page, size_t size);
 
-void				*create_allocation(t_header *data, size_t size,
-		t_page_type type);
-int					looking_for_place(t_meta_data *region, t_page_type type);
+void				*looking_for_place(t_header *region, t_page_type type,
+		size_t size);
 t_header			*new_zone(t_page_type type, size_t size);
+size_t				zone_size(int size);
 
 void				free_large_zone(t_header *data, t_header *preview);
 void				free_tiny_small_zone(t_header *data, t_header *preview,
@@ -89,6 +90,7 @@ void				init_meta_data(t_header *data, size_t size,
 		t_page_type type);
 void				malloc_stats(void);
 int					print_bloc_address(t_meta_data *tmp);
+size_t				padding(size_t val);
 
 void				print_value(unsigned long val);
 void				print_address(unsigned long val);

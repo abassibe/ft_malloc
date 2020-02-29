@@ -6,14 +6,14 @@
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/18 14:40:29 by abassibe          #+#    #+#             */
-/*   Updated: 2020/02/27 02:38:43 by abassibe         ###   ########.fr       */
+/*   Updated: 2020/02/29 06:56:56 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include "../includes/malloc.h"
 
-int	main()
+int	main(void)
 {
 	int		i;
 	char	*addr;
