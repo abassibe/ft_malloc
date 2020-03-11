@@ -6,7 +6,7 @@
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/13 02:25:52 by abassibe          #+#    #+#             */
-/*   Updated: 2020/02/29 06:37:00 by abassibe         ###   ########.fr       */
+/*   Updated: 2020/03/11 11:48:50 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,10 @@ t_header	*init_header(size_t size)
 	data = NULL;
 	type = get_page_type(size);
 	if (type == TINY)
-		data = mmap(0, calculat_zone_size(MAX_TINY_SIZE),
+		data = mmap(0, zone_size(MAX_TINY_SIZE),
 				PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
 	else if (type == SMALL)
-		data = mmap(0, calculat_zone_size(MAX_SMALL_SIZE),
+		data = mmap(0, zone_size(MAX_SMALL_SIZE),
 				PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
 	else
 		data = allocate_large(data, size);

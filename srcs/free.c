@@ -6,7 +6,7 @@
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/13 15:13:07 by abassibe          #+#    #+#             */
-/*   Updated: 2020/02/29 06:37:27 by abassibe         ###   ########.fr       */
+/*   Updated: 2020/03/11 11:48:19 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,8 @@ void			free_tiny_small_zone(t_header *data, t_header *preview,
 			preview->next_zone = NULL;
 		else
 			preview->next_zone = data->next_zone;
-		size_to_free = data->type == TINY ? calculat_zone_size(MAX_TINY_SIZE) :
-			calculat_zone_size(MAX_SMALL_SIZE);
+		size_to_free = data->type == TINY ? zone_size(MAX_TINY_SIZE) :
+			zone_size(MAX_SMALL_SIZE);
 		munmap(data, size_to_free);
 	}
 	return ;
