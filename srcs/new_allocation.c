@@ -6,7 +6,7 @@
 /*   By: abassibe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/13 02:32:12 by abassibe          #+#    #+#             */
-/*   Updated: 2020/02/29 07:02:41 by abassibe         ###   ########.fr       */
+/*   Updated: 2020/06/22 12:00:02 by abassibe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,6 @@ t_header			*new_zone(t_page_type type, size_t size)
 static t_meta_data	*create_new_block(t_meta_data *current_block,
 		t_meta_data *next_block, size_t size)
 {
-	int		length;
-
-	length = padding(size);
 	next_block->addr = (void *)((char *)next_block +
 			padding(sizeof(t_meta_data)));
 	next_block->prev = current_block;

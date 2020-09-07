@@ -6,7 +6,7 @@
 #    By: abassibe <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/02/10 12:45:46 by abassibe          #+#    #+#              #
-#    Updated: 2020/02/27 05:43:28 by abassibe         ###   ########.fr        #
+#    Updated: 2020/06/22 11:59:18 by abassibe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,7 +31,7 @@ OBJS = $(SRCS:.c=.o)
 
 SRCPATH = ./srcs/
 
-FLAGS = -Wall -Wextra -Werror
+FLAGS = -Wall -Wextra -Werror -Unused
 
 .PHONY: all clean fclean re
 
@@ -54,5 +54,6 @@ clean:
 fclean: clean
 	@make -C libft fclean
 	@rm -rf libft/libft.a $(NAME)
+	@rm -rf libft_malloc.so
 
 re: fclean all
